@@ -3,82 +3,23 @@ stages:
   - docker
   - doploy
 
-build-local:
+build:
   stage: build
-  image: "docker.lcgc.work/fe/global-fe:0.5.5"
-  only:
-    - /^dev_.*$/
-  before_script:
-    - export BUILD_PATH=$(pwd)
-  script:
-    - cp -R ${BUILD_PATH} /opt/fe/src/
-    - cd /opt/fe && cnpm run lint
-    - cd /opt/fe && cnpm run dev
-    - cp -R /opt/fe/dist ${BUILD_PATH}
-  artifacts:
-    name: "${CI_BUILD_STAGE}_${CI_BUILD_ID}"
-    paths:
-      - dist/
-    expire_in: 1d
-
-build-dev:
-  stage: build
-  image: "docker.lcgc.work/fe/global-fe:0.5.5"
+  image: 'docker.lcgc.work/node:base-1.1.0'
   only:
     - dev
-  before_script:
-    - export BUILD_PATH=$(pwd)
-  script:
-    - cp -R ${BUILD_PATH} /opt/fe/src/
-    - cd /opt/fe && cnpm run lint
-    - cd /opt/fe && cnpm run dev
-    - cp -R /opt/fe/dist ${BUILD_PATH}
-  artifacts:
-    name: "${CI_BUILD_STAGE}_${CI_BUILD_ID}"
-    paths:
-      - dist/
-    expire_in: 1d
-
-build-pre:
-  stage: build
-  image: "docker.lcgc.work/fe/global-fe:0.5.5"
-  only:
     - pre
-  before_script:
-    - export BUILD_PATH=$(pwd)
-  script:
-    - cp -R ${BUILD_PATH} /opt/fe/src/
-    - cd /opt/fe && cnpm run lint
-    - cd /opt/fe && cnpm run prod
-    - cp -R /opt/fe/dist ${BUILD_PATH}
-  artifacts:
-    name: "${CI_BUILD_STAGE}_${CI_BUILD_ID}"
-    paths:
-      - dist/
-    expire_in: 1d
-
-build-prod:
-  stage: build
-  image: "docker.lcgc.work/fe/global-fe:0.5.5"
-  only:
     - master
-    - /^\d+\.\d+\.\d+$/
-  before_script:
-    - export BUILD_PATH=$(pwd)
   script:
-    - cp -R ${BUILD_PATH} /opt/fe/src/
-    - cd /opt/fe && cnpm run lint
-    - cd /opt/fe && cnpm run prod
-    - cp -R /opt/fe/dist ${BUILD_PATH}
-  artifacts:
-    name: "${CI_BUILD_STAGE}_${CI_BUILD_ID}"
+    - cnpm install
+    - cnpm run client-build
+  cache:
     paths:
-      - dist/
-    expire_in: 7d
+      - node_modules/
 
 docker-dev:
   stage: docker
-  image: "docker:dind"
+  image: 'docker:dind'
   when: on_success
   only:
     - dev
@@ -91,7 +32,7 @@ docker-dev:
 
 docker-pre:
   stage: docker
-  image: "docker:dind"
+  image: 'docker:dind'
   when: on_success
   only:
     - pre
@@ -104,7 +45,7 @@ docker-pre:
 
 docker-prod:
   stage: docker
-  image: "docker:dind"
+  image: 'docker:dind'
   when: on_success
   only:
     - /^\d+\.\d+\.\d+$/
@@ -117,7 +58,7 @@ docker-prod:
 
 deploy-dev:
   stage: doploy
-  image: "docker.lcgc.work/kubectl"
+  image: 'docker.lcgc.work/kubectl'
   when: on_success
   dependencies: []
   only:
@@ -129,16 +70,13 @@ deploy-dev:
     - export CIK8S_CONFIG_TOKEN=${STAGE_KUBE_TOKEN}
     - export CIK8S_CONFIG_REPLICAS=1
     - export CIK8S_CONFIG_IMAGE=docker.lcgc.work/${CI_PROJECT_PATH}:dev-${CI_PIPELINE_ID}
-    - export CIK8S_ENV_NGINX_UPSTREAM=dw.conversion.stage
-    - export CIK8S_ENV_NGINX_TARGET=kube-test
-    - export CIK8S_ENV_NGINX_PROTOCOL=http
-    - export CIK8S_PORT_NGINX_PORT=
+    - export CIK8S_PORT_APP_PORT=
   script:
     - deploy
 
 deploy-pre:
   stage: doploy
-  image: "docker.lcgc.work/kubectl"
+  image: 'docker.lcgc.work/kubectl'
   when: on_success
   dependencies: []
   only:
@@ -150,16 +88,13 @@ deploy-pre:
     - export CIK8S_CONFIG_TOKEN=${RELEASE_KUBE_TOKEN}
     - export CIK8S_CONFIG_REPLICAS=1
     - export CIK8S_CONFIG_IMAGE=docker.lcgc.work/${CI_PROJECT_PATH}:pre-${CI_PIPELINE_ID}
-    - export CIK8S_ENV_NGINX_UPSTREAM=dw.conversion
-    - export CIK8S_ENV_NGINX_TARGET=kube
-    - export CIK8S_ENV_NGINX_PROTOCOL=http
-    - export CIK8S_PORT_NGINX_PORT=
+    - export CIK8S_PORT_APP_PORT=
   script:
     - deploy
 
 deploy-prod:
   stage: doploy
-  image: "docker.lcgc.work/kubectl"
+  image: 'docker.lcgc.work/kubectl'
   when: manual
   dependencies: []
   only:
@@ -171,9 +106,6 @@ deploy-prod:
     - export CIK8S_CONFIG_TOKEN=${RELEASE_KUBE_TOKEN}
     - export CIK8S_CONFIG_REPLICAS=2
     - export CIK8S_CONFIG_IMAGE=docker.lcgc.work/${CI_PROJECT_PATH}:prod-${CI_COMMIT_REF_NAME}
-    - export CIK8S_ENV_NGINX_UPSTREAM=dw.conversion
-    - export CIK8S_ENV_NGINX_TARGET=kube
-    - export CIK8S_ENV_NGINX_PROTOCOL=http
-    - export CIK8S_PORT_NGINX_PORT=
+    - export CIK8S_PORT_APP_PORT=
   script:
     - deploy

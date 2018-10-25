@@ -1,6 +1,5 @@
 import Axios from 'axios'
 import message from 'antd/lib/message'
-import { isDev } from '../../common/utils'
 
 const axiosInstance = Axios.create()
 
@@ -23,15 +22,6 @@ axiosInstance.interceptors.response.use(
 const URLS = {
   config: '/api/v1/config'
 }
-
-let BASE_URL = ''
-
-// if (isDev()) {
-//   BASE_URL = 'http://localhost:7001'
-//   for (const key in URLS) {
-//     URLS[key] = `${BASE_URL}${URLS[key]}`
-//   }
-// }
 
 const handleActivityConfig = initData => {
   let data = JSON.parse(JSON.stringify(initData))
