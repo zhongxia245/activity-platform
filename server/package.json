@@ -1,0 +1,46 @@
+{
+  "name": "activity-platform-eggjs",
+  "version": "1.0.0",
+  "description": "理财工场活动开发平台",
+  "main": "app.js",
+  "scripts": {
+    "lint": "eslint .",
+    "start": "egg-scripts start --daemon --title=egg-server-activity-platform",
+    "stop": "egg-scripts stop --title=egg-server-activity-platform",
+    "dev": "egg-bin dev",
+    "debug": "egg-bin debug",
+    "test": "npm run lint -- --fix && npm run test-local",
+    "test-local": "egg-bin test",
+    "cov": "egg-bin cov",
+    "ci": "npm run lint && npm run cov",
+    "autod": "autod"
+  },
+  "author": "huangxiaodong <huangxiaodong@licaigc.com>",
+  "dependencies": {
+    "egg": "^2.2.1",
+    "egg-cors": "^2.1.1",
+    "egg-mongoose": "^3.1.0",
+    "egg-redis": "^2.0.0",
+    "egg-router-plus": "^1.3.0",
+    "egg-scripts": "^2.5.0",
+    "egg-sequelize": "^4.1.0",
+    "egg-static": "^2.1.1",
+    "mysql2": "^1.6.1"
+  },
+  "devDependencies": {
+    "autod": "^3.0.1",
+    "autod-egg": "^1.0.0",
+    "egg-bin": "^4.3.5",
+    "egg-ci": "^1.8.0",
+    "egg-mock": "^3.14.0",
+    "eslint-config-egg": "^6.0.0",
+    "webstorm-disable-index": "^1.2.0"
+  },
+  "ci": {
+    "version": "8"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}
