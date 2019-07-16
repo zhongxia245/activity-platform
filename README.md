@@ -12,8 +12,12 @@ npm run dev
 # open http://localhost:8000/client/web/index.html
 ```
 
-## 存在的问题 ？
+## 存在的问题
 
 ### 1. 组件模块如果多的话，在 shou 里面，如何按需加载使用到的组件？
 
 webpack 有一个 bundle-loader 可以试一下。
+
+## 平台效果
+
+![](http://ww4.sinaimg.cn/large/006tNc79ly1g51ougcdfcj31je0u0tem.jpg)
