@@ -1,9 +1,9 @@
-'use strict'
+"use strict";
 
 module.exports = app => {
-  const { STRING, INTEGER, BOOLEAN, TEXT } = app.Sequelize
+  const { STRING, INTEGER, BOOLEAN, TEXT } = app.Sequelize;
 
-  const Config = app.model.define('tb_config', {
+  const Config = app.model.define("tb_config", {
     name: {
       type: STRING(30),
       allowNull: false
@@ -18,13 +18,13 @@ module.exports = app => {
     status: BOOLEAN, // 活动状态 true 上线状态  false 下线状态
     config: {
       type: TEXT,
-      defaultValue: '{}'
+      defaultValue: "{}"
     }, // 配置信息
     disabled: {
       type: BOOLEAN,
       defaultValue: false
     } // 是否禁用
-  })
+  });
 
-  return Config
-}
+  return Config;
+};
